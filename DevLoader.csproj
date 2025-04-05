@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+				<LangVersion>latest</LangVersion>
+
+				<SteamInstallPathFromRegistry Condition="'$(OS)' == 'Windows_NT'">$([MSBuild]::GetRegistryValue('HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Valve\Steam', 'InstallPath'))</SteamInstallPathFromRegistry>
+
+				<SteamDir Condition="'$(OS)' == 'Windows_NT' AND '$(SteamInstallPathFromRegistry)' != ''">$(SteamInstallPathFromRegistry)/steamapps</SteamDir>
+        <SteamDir Condition="'$(OS)' == 'Windows_NT' AND '$(SteamInstallPathFromRegistry)' == ''">C:/Program Files (x86)/Steam/steamapps</SteamDir>
+				<SteamDir Condition="'$(OS)' != 'Windows_NT'">$(HOME)/.steam/steam/steamapps</SteamDir>
+				
+				<HasteDir>$(SteamDir)/common/Haste</HasteDir>
+				<HasteDlls>$(HasteDir)/Haste_Data/Managed/*.dll</HasteDlls>
+				
+				<WorkshopDir>$(SteamDir)/workshop/content/1796470</WorkshopDir>
+				<WorkshopDlls>$(WorkshopDir)/*/*.dll</WorkshopDlls>
+
+        <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+        <GenerateDependencyFile>false</GenerateDependencyFile>
+        <DebugType>none</DebugType>
+    </PropertyGroup>
+
+    <ItemGroup>
+			<Reference Include="$(HasteDlls)" Private="false"/>
+			<Reference Include="$(WorkshopDlls)" Private="false" Condition="Exists('$(WorkshopDir)')"/>
+    </ItemGroup>
+
+</Project>
